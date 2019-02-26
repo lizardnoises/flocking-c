@@ -1,8 +1,19 @@
 #include "boids.h"
-#include "v2.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
+float rand_normalized() {
+    return (float) rand() / (float) RAND_MAX;
+}
+
+Vector2 Vector2Clip(Vector2 v, float max) {
+    float length = Vector2Length(v);
+    if (length > max) {
+        v = Vector2Divide(v, length / max);
+    }
+    return v;
+}
 
 void init_boids(struct boid_state *state,
                 struct boid *boids,
@@ -23,12 +34,12 @@ void init_boids(struct boid_state *state,
         b->mass = mass;
         b->max_force = max_force;
         b->max_speed = max_speed;
-        b->force = (struct v2) { .x = 0.0f, .y = 0.0f };
-        b->velocity = (struct v2) {
+        b->force = (Vector2) { .x = 0.0f, .y = 0.0f };
+        b->velocity = (Vector2) {
             .x = rand_normalized() * max_speed,
             .y = rand_normalized() * max_speed
         };
-        b->position = (struct v2) {
+        b->position = (Vector2) {
             .x = rand_normalized() * width,
             .y = rand_normalized() * height
         };
@@ -39,11 +50,11 @@ void init_boids(struct boid_state *state,
 void integrate(struct boid_state *state) {
     for (unsigned i = 0; i < state->n; i++) {
         struct boid *b = &(state->boids[i]);
-        b->force = v2_truncated(b->force, b->max_force);
-        struct v2 acceleration = v2_div_scalar(b->force, b->mass);
-        b->velocity = v2_add(b->velocity, acceleration);
-        b->velocity = v2_truncated(b->velocity, b->max_speed);
-        b->position = v2_add(b->position, b->velocity);
+        b->force = Vector2Clip(b->force, b->max_force);
+        Vector2 acceleration = Vector2Divide(b->force, b->mass);
+        b->velocity = Vector2Add(b->velocity, acceleration);
+        b->velocity = Vector2Clip(b->velocity, b->max_speed);
+        b->position = Vector2Add(b->position, b->velocity);
         if (b->position.x > state->width) {
             b->position.x -= state->width;
         }
@@ -68,12 +79,12 @@ void separation(struct boid_state *state) {
                 continue;
             }
             struct boid *bj = &(state->boids[j]);
-            struct v2 pos_dif = v2_sub(bi->position, bj->position);
-            float r = v2_length(pos_dif);
+            Vector2 pos_dif = Vector2Subtract(bi->position, bj->position);
+            float r = Vector2Length(pos_dif);
             if (r <= bi->fov_radius) {
-                struct v2 force_dir = v2_normalized(pos_dif);
-                struct v2 force = v2_div_scalar(force_dir, r);
-                bi->force = v2_add(bi->force, force);
+                Vector2 force_dir = Vector2Normalize(pos_dif);
+                Vector2 force = Vector2Divide(force_dir, r);
+                bi->force = Vector2Add(bi->force, force);
             }
         }
     }
@@ -83,25 +94,25 @@ void cohesion(struct boid_state *state) {
     for (unsigned i = 0; i < state->n; i++) {
         struct boid *bi = &(state->boids[i]);
         unsigned n = 0;
-        struct v2 center = { .x = 0.0f, .y = 0.0f };
+        Vector2 center = { .x = 0.0f, .y = 0.0f };
         for (unsigned j = 0; j < state->n; j++) {
             if (i == j) {
                 continue;
             }
             struct boid *bj = &(state->boids[j]);
-            struct v2 pos_dif = v2_sub(bi->position, bj->position);
-            float r = v2_length(pos_dif);
+            Vector2 pos_dif = Vector2Subtract(bi->position, bj->position);
+            float r = Vector2Length(pos_dif);
             if (r <= bi->fov_radius) {
-                center = v2_add(center, bj->position);
+                center = Vector2Add(center, bj->position);
                 n++;
             }
         }
         if (n > 0) {
-            center = v2_div_scalar(center, n);
-            struct v2 pos_dif = v2_sub(center, bi->position);
-            struct v2 force_dir = v2_normalized(pos_dif);
-            struct v2 force = v2_mult_scalar(force_dir, v2_length(pos_dif) / bi->fov_radius);
-            bi->force = v2_add(bi->force, force);
+            center = Vector2Divide(center, n);
+            Vector2 pos_dif = Vector2Subtract(center, bi->position);
+            Vector2 force_dir = Vector2Normalize(pos_dif);
+            Vector2 force = Vector2Divide(force_dir, bi->fov_radius / Vector2Length(pos_dif));
+            bi->force = Vector2Add(bi->force, force);
         }
     }
 }
@@ -110,25 +121,25 @@ void alignment(struct boid_state *state) {
     for (unsigned i = 0; i < state->n; i++) {
         struct boid *bi = &(state->boids[i]);
         unsigned n = 0;
-        struct v2 avg_velocity = { .x = 0.0f, .y = 0.0f };
+        Vector2 avg_velocity = Vector2Zero();
         for (unsigned j = 0; j < state->n; j++) {
             if (i == j) {
                 continue;
             }
             struct boid *bj = &(state->boids[j]);
-            struct v2 pos_dif = v2_sub(bi->position, bj->position);
-            float r = v2_length(pos_dif);
+            Vector2 pos_dif = Vector2Subtract(bi->position, bj->position);
+            float r = Vector2Length(pos_dif);
             if (r <= bi->fov_radius) {
-                avg_velocity = v2_add(avg_velocity, bj->velocity);
+                avg_velocity = Vector2Add(avg_velocity, bj->velocity);
                 n++;
             }
         }
         if (n > 0) {
-            avg_velocity = v2_div_scalar(avg_velocity, n);
-            struct v2 velocity_dif = v2_sub(avg_velocity, bi->velocity);
-            struct v2 force_dir = v2_normalized(velocity_dif);
-            struct v2 force = v2_mult_scalar(force_dir, v2_length(velocity_dif));
-            bi->force = v2_add(bi->force, force);
+            avg_velocity = Vector2Divide(avg_velocity, n);
+            Vector2 velocity_dif = Vector2Subtract(avg_velocity, bi->velocity);
+            Vector2 force_dir = Vector2Normalize(velocity_dif);
+            Vector2 force = Vector2Scale(force_dir, Vector2Length(velocity_dif));
+            bi->force = Vector2Add(bi->force, force);
         }
     }
 }

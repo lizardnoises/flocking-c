@@ -1,16 +1,16 @@
 #ifndef BOIDS_H
 #define BOIDS_H
 
-#include "v2.h"
+#include "raymath.h"
 
 struct boid {
     float mass;
     float max_speed;
     float max_force;
     float fov_radius;
-    struct v2 position;
-    struct v2 velocity;
-    struct v2 force;
+    struct Vector2 position;
+    struct Vector2 velocity;
+    struct Vector2 force;
 };
 
 struct boid_state {

@@ -1,12 +1,11 @@
 #include "raylib.h"
 #include "boids.h"
-#include "v2.h"
 #include <stdlib.h>
 #include <time.h>
 
 void draw_boid(struct boid *b, float radius, Color color) {
     DrawCircleLines(b->position.x, b->position.y, radius, color);
-    struct v2 direction = v2_mult_scalar(v2_normalized(b->velocity), 2 * radius);
+    Vector2 direction = Vector2Divide(Vector2Normalize(b->velocity), 1.0f / (2.0f * radius));
     DrawLine(b->position.x,
              b->position.y,
              b->position.x + direction.x,
