@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "boids.h"
+#include "boid.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -11,56 +11,51 @@ void draw_boid(struct boid *b, float radius, Color color) {
              b->position.x + direction.x,
              b->position.y + direction.y,
              color);
+    //DrawCircleLines(b->position.x, b->position.y, b->neighbors.radius, GRAY);
 }
 
-void draw_boids(struct boid_state *state, float radius) {
+void draw_boids(struct boid_state *state) {
     for (unsigned i = 0; i < state->n; i++) {
-        draw_boid(&(state->boids[i]), radius, DARKPURPLE);
+        draw_boid(&(state->boids[i]), state->boid_size, DARKPURPLE);
     }
-}
-
-void update_boids(struct boid_state *state) {
-    separation(state);
-    cohesion(state);
-    alignment(state);
-    integrate(state);
 }
 
 int main() {
     srand(time(NULL));
-    const int screenWidth = 800;
-    const int screenHeight = 600;
-    const int n = 100;
-    const float radius = 5.0f;
-    const float mass = 1.0f;
-    const float max_speed = 3.0f;
-    const float max_force = 0.1f;
-    const float fov_radius = 200.0f;
 
-    struct boid boids[n];
-    struct boid_state state;
-    init_boids(&state,
-               boids,
-               n,
-               screenWidth,
-               screenHeight,
-               mass,
-               max_speed,
-               max_force,
-               fov_radius);
+    const int screen_width = 1200;
+    const int screen_height = 800;
 
-    InitWindow(screenWidth, screenHeight, "boids!");
+    struct boid_parameters params = {
+        .n = 100,
+        .width = screen_width,
+        .height = screen_height,
+        .max_speed = 2.0f,
+        .neighbor_radius = 150.0f,
+        .x_separation = 1.0f,
+        .x_cohesion = 0.003f,
+        .x_alignment = 1.0f,
+        .x_bounds = 0.002f,
+        .boid_size = 5.0f
+    };
+
+    struct boid_state *state = boid_state_new(&params);
+
+    InitWindow(screen_width, screen_height, "boids!");
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("boids!", 360, 280, 20, LIGHTGRAY);
-        draw_boids(&state, radius);
-        update_boids(&state);
+        DrawText("boids!", state->width / 2 - 80, state->height / 2 - 20, 40, LIGHTGRAY);
+        draw_boids(state);
         EndDrawing();
+
+        boid_update_neighbors(state);
+        boid_state_update(state);
     }
 
     CloseWindow();
+    boid_state_delete(state);
     return 0;
 }
