@@ -3,28 +3,36 @@
 #include <stdlib.h>
 #include <time.h>
 
+/**
+ * Draw a single boid as a circle representing size and an intersecting line
+ * segment representing direction.
+ */
 void draw_boid(struct boid *b, float radius, Color color) {
     DrawCircleLines(b->position.x, b->position.y, radius, color);
-    Vector2 direction = Vector2Divide(Vector2Normalize(b->velocity), 1.0f / (2.0f * radius));
+    Vector2 direction = Vector2Divide(Vector2Normalize(b->velocity),
+                        1.0f / (2.0f * radius));
     DrawLine(b->position.x,
              b->position.y,
              b->position.x + direction.x,
              b->position.y + direction.y,
              color);
-    //DrawCircleLines(b->position.x, b->position.y, b->neighbors.radius, GRAY);
 }
 
-void draw_boids(struct boid_state *state) {
+/**
+ * Draws each boid in the state at it's current location with it's current
+ * direction.
+ */
+void draw_boids(struct boid_state *state, Color color) {
     for (unsigned i = 0; i < state->n; i++) {
-        draw_boid(&(state->boids[i]), state->boid_size, DARKPURPLE);
+        draw_boid(&(state->boids[i]), state->boid_size, color);
     }
 }
 
 int main() {
     srand(time(NULL));
 
-    const int screen_width = 1200;
-    const int screen_height = 800;
+    const int screen_width = 600;
+    const int screen_height = 600;
 
     struct boid_parameters params = {
         .n = 100,
@@ -48,7 +56,7 @@ int main() {
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawText("boids!", state->width / 2 - 80, state->height / 2 - 20, 40, LIGHTGRAY);
-        draw_boids(state);
+        draw_boids(state, DARKPURPLE);
         EndDrawing();
 
         boid_update_neighbors(state);

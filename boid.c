@@ -1,21 +1,8 @@
 #include "boid.h"
+#include "boid_utility.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
-static float rand_normalized() {
-    return (float) rand() / (float) RAND_MAX;
-}
-
-static float wrap(float value, float min, float max) {
-    if (value < min) {
-        value += (max - min);
-    }
-    else if (value > max) {
-        value -= (max - min);
-    }
-    return value;
-}
 
 struct boid_state *boid_state_new(struct boid_parameters *p) {
     struct boid_state *state = malloc(sizeof(struct boid_state));
@@ -72,8 +59,6 @@ void boid_state_update(struct boid_state *state) {
         b->velocity = Vector2Add(b->velocity, Vector2Scale(boid_avoid_point(b, GetMouseX(), GetMouseY()), 20.0f));
 
         b->position = Vector2Add(b->position, b->velocity);
-        //b->position.x = wrap(b->position.x, 0, state->width);
-        //b->position.y = wrap(b->position.y, 0, state->height);
     }
 }
 
@@ -151,13 +136,4 @@ Vector2 boid_avoid_point(struct boid *b, float x, float y) {
         acceleration = Vector2Divide(Vector2Normalize(displacement), distance);
     }
     return acceleration;
-}
-
-Vector2 Vector2Clip(Vector2 v, float max) {
-    float length = Vector2Length(v);
-    if (length > max) {
-        float r = length / max;
-        v = Vector2Divide(v, r);
-    }
-    return v;
 }
