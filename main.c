@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "boid.h"
+#include "boid_config.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -30,21 +31,26 @@ void draw_boids(struct boid_state *state, Color color) {
 
 int main() {
     srand(time(NULL));
+    
+    struct boid_config config;
+    if (parse_config(&config, "config.txt") == 0) {
+        return EXIT_FAILURE;
+    }
 
-    const int screen_width = 600;
-    const int screen_height = 600;
+    const int screen_width = config.screen_width;
+    const int screen_height = config.screen_height;
 
     struct boid_parameters params = {
-        .n = 100,
-        .width = screen_width,
-        .height = screen_height,
-        .max_speed = 2.0f,
-        .neighbor_radius = 150.0f,
-        .x_separation = 1.0f,
-        .x_cohesion = 0.003f,
-        .x_alignment = 1.0f,
-        .x_bounds = 0.002f,
-        .boid_size = 5.0f
+        .n = config.n,
+        .width = config.width,
+        .height = config.height,
+        .max_speed = config.max_speed,
+        .neighbor_radius = config.neighbor_radius,
+        .x_separation = config.x_separation,
+        .x_cohesion = config.x_cohesion,
+        .x_alignment = config.x_alignment,
+        .x_bounds = config.x_bounds,
+        .boid_size = config.boid_size
     };
 
     struct boid_state *state = boid_state_new(&params);

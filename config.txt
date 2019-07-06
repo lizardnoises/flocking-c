@@ -1,0 +1,12 @@
+n=100
+screen_width=600
+screen_height=600
+width=600.0
+height=600.0
+max_speed=2.0
+neighbor_radius=150.0
+x_separation=1.0
+x_cohesion=0.003
+x_alignment=1.0
+x_bounds=0.002
+boid_size=5.0
