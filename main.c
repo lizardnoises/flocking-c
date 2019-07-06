@@ -5,25 +5,35 @@
 #include <time.h>
 
 /**
- * Draw a single boid as a circle representing size and an intersecting line
- * segment representing direction.
+ * Rotate a 2D vector about 0,0.
  */
-void draw_boid(struct boid *b, float radius, Color color) {
-    DrawCircleLines(b->position.x, b->position.y, radius, color);
-    Vector2 direction = Vector2Divide(Vector2Normalize(b->velocity),
-                        1.0f / (2.0f * radius));
-    DrawLine(b->position.x,
-             b->position.y,
-             b->position.x + direction.x,
-             b->position.y + direction.y,
-             color);
+static Vector2 Vector2Rotate(Vector2 v, float angle) {
+    float angle_rad = DEG2RAD * angle;
+    float sa = sinf(angle_rad);
+    float ca = cosf(angle_rad);
+    Vector2 v2 = {
+        ca * v.x - sa * v.y,
+        sa * v.x + ca * v.y
+    };
+    return v2;
+}
+
+/**
+ * Draw a single boid as a directional triangle.
+ */
+static void draw_boid(const struct boid *b, float radius, Color color) {
+    Vector2 point = Vector2Scale(Vector2Normalize(b->velocity), radius);
+    Vector2 v1 = Vector2Add(b->position, point);
+    Vector2 v2 = Vector2Add(b->position, Vector2Rotate(point, 135.0f));
+    Vector2 v3 = Vector2Add(b->position, Vector2Rotate(point, 225.0f));
+    DrawTriangleLines(v1, v3, v2, color);
 }
 
 /**
  * Draws each boid in the state at it's current location with it's current
  * direction.
  */
-void draw_boids(struct boid_state *state, Color color) {
+static void draw_boids(const struct boid_state *state, Color color) {
     for (unsigned i = 0; i < state->n; i++) {
         draw_boid(&(state->boids[i]), state->boid_size, color);
     }

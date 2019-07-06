@@ -62,6 +62,8 @@ struct boid_state *boid_state_new(struct boid_parameters *p) {
     state->x_cohesion = p->x_cohesion;
     state->x_separation = p->x_separation;
     state->x_bounds = p->x_bounds;
+
+    return state;
 }
 
 void boid_state_delete(struct boid_state *state) {
