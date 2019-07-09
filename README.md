@@ -2,6 +2,8 @@
 
 A simple boid flocking behavior simulator
 
+[![Build Status](https://travis-ci.com/moorsean/boids.svg?token=TZmXJ8yZktiSxhZyP82z&branch=master)](https://travis-ci.com/moorsean/boids)
+
 ## Prerequisites
 
 - [CMake](https://cmake.org/)
