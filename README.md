@@ -52,7 +52,7 @@ Example for Ninja:
 cmake -G "Ninja" ..
 ```
 
-After building, execute the program `boid`, located in the build target's directory.
+After building, execute the program `boids`, located in the build target's directory.
 
 Example for Visual Studio:
 
