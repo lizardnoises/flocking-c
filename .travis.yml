@@ -8,11 +8,11 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - george-edison55-precise-backports
-            - mesa
           packages:
             - g++-7
             - cmake-data
             - cmake
+            - xorg-dev
             - libgl1-mesa-dev
         env:
           - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
