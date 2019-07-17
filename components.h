@@ -14,7 +14,7 @@ struct move_component {
     float max_speed;
 };
 
-struct neighborhood_component {
+struct neighbor_component {
     float radius;
 };
 
@@ -50,7 +50,7 @@ struct component_flags {
 struct component_manager {
     struct position_component position[MAX_ENTITIES];
     struct move_component move[MAX_ENTITIES];
-    struct neighborhood_component neighborhood[MAX_ENTITIES];
+    struct neighbor_component neighbor[MAX_ENTITIES];
     struct alignment_component alignment[MAX_ENTITIES];
     struct bounds_component bounds[MAX_ENTITIES];
     struct cohesion_component cohesion[MAX_ENTITIES];
