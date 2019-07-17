@@ -14,24 +14,24 @@ struct move_component {
     float max_speed;
 };
 
-struct neighbor_component {
-    float radius;
-};
-
 struct alignment_component {
     float weight;
+    float radius;
 };
 
 struct bounds_component {
     float weight;
+    float radius;
 };
 
 struct cohesion_component {
     float weight;
+    float radius;
 };
 
 struct separation_component {
     float weight;
+    float radius;
 };
 
 /**
@@ -40,7 +40,6 @@ struct separation_component {
 struct component_flags {
     unsigned int position : 1;
     unsigned int move : 1;
-    unsigned int neighborhood : 1;
     unsigned int alignment : 1;
     unsigned int bounds : 1;
     unsigned int cohesion : 1;
@@ -50,7 +49,6 @@ struct component_flags {
 struct component_manager {
     struct position_component position[MAX_ENTITIES];
     struct move_component move[MAX_ENTITIES];
-    struct neighbor_component neighbor[MAX_ENTITIES];
     struct alignment_component alignment[MAX_ENTITIES];
     struct bounds_component bounds[MAX_ENTITIES];
     struct cohesion_component cohesion[MAX_ENTITIES];
