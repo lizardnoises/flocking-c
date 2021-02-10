@@ -1,4 +1,4 @@
-add_executable(${PROJECT_NAME} main.c boid.c boid_config.c)
+add_executable(${PROJECT_NAME} main.c boid.c boid_config.c vector_aux.c)
 target_link_libraries(${PROJECT_NAME} raylib)
 
 add_custom_command(TARGET boids POST_BUILD

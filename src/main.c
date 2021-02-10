@@ -1,22 +1,9 @@
 #include "raylib.h"
 #include "boid.h"
 #include "boid_config.h"
+#include "vector_aux.h"
 #include <stdlib.h>
 #include <time.h>
-
-/**
- * Rotate a 2D vector about 0,0.
- */
-static Vector2 Vector2Rotate(Vector2 v, float angle) {
-    float angle_rad = DEG2RAD * angle;
-    float sa = sinf(angle_rad);
-    float ca = cosf(angle_rad);
-    Vector2 v2 = {
-        ca * v.x - sa * v.y,
-        sa * v.x + ca * v.y
-    };
-    return v2;
-}
 
 /**
  * Draw a single boid as a directional triangle.

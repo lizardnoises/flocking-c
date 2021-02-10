@@ -1,19 +1,8 @@
 #include "boid.h"
+#include "vector_aux.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
-/**
- * Return a copy of the vector with the magnitude restricted to at most max.
- */
-static Vector2 Vector2Clip(Vector2 v, float max) {
-    float length = Vector2Length(v);
-    if (length > max) {
-        float r = length / max;
-        v = Vector2Divide(v, r);
-    }
-    return v;
-}
 
 /**
  * Return a random float normalized to the interval (0, 1).
