@@ -66,6 +66,7 @@ cd Debug
 Example for MinGW/Ninja:
 
 ```
+cd bin
 ./boids
 ```
 
