@@ -2,7 +2,7 @@
 
 A simple boid flocking behavior simulator
 
-[![Build Status](https://travis-ci.com/moorsean/boids.svg?token=TZmXJ8yZktiSxhZyP82z&branch=master)](https://travis-ci.com/moorsean/boids)
+[![Build Status](https://travis-ci.com/lizardnoises/flocking-c.svg?token=rJ24sZWsqJdCKispJxxN&branch=main)](https://travis-ci.com/lizardnoises/flocking-c)
 
 ## Prerequisites
 
